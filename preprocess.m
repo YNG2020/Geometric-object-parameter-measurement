@@ -43,6 +43,7 @@ for i = 1 : 28
     normalVector = model.Normal;
     % 目标水平面法向量
     if i == 11 || i == 12
+        % 这个点云数据有点特别，特别处理一下
         targetVector = [0, 0, -1];
     else
         targetVector = [0, 0, 1];
@@ -71,6 +72,7 @@ for i = 1 : 28
 
     remainingPoints(:, 3) = remainingPoints(:, 3) - mean(planePoints(:, 3));  % 将数据挪到z = 0平面上
     if mean(remainingPoints(:, 3) < 0)
+        % 方面对点云数据的观察
         remainingPoints(:, 3) = -remainingPoints(:, 3);
     end
     remainingPoints(:, 2) = remainingPoints(:, 2) - mean(remainingPoints(:, 2)); % 将数据归于平面的原点
