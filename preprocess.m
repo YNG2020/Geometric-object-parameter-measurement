@@ -5,7 +5,7 @@ rng(1);
 close all
 cleanData = cell(1, 28);
 % 以下是数据预处理
-for i = [9 10 11 12]
+for i = 1 : 28
     data = allData{i};
     
     % 2. 使用RANSAC算法检测平面
@@ -42,7 +42,11 @@ for i = [9 10 11 12]
     % 法向量
     normalVector = model.Normal;
     % 目标水平面法向量
-    targetVector = [0, 0, 1];
+    if i == 11 || i == 12
+        targetVector = [0, 0, -1];
+    else
+        targetVector = [0, 0, 1];
+    end
     
     % 计算旋转轴（法向量和目标向量的叉积）
     rotationAxis = cross(normalVector, targetVector);

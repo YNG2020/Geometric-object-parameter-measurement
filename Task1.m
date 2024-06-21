@@ -1,5 +1,7 @@
 load 'cleanData.mat' cleanData
 rng(1);
+
+%% 检查数据
 data = [cleanData{1}; cleanData{2}; cleanData{4}];
 
 % 使用 MATLAB 内置的 pcfitplane 函数
@@ -34,6 +36,7 @@ pcshow(remainingPoints, 'b', 'MarkerSize', 40);
 title('去平面的点云');
 xlabel('X'); ylabel('Y'); zlabel('Z');
 
+%% 分离出平面，然后用PCA方法求出长方形平面的长轴和短轴，并将其投影到水平面上，然后把长方形的四个端点找出来即可求得长和宽
 length = 0; width = 0; height = 0;
 for i = [1 2 4]
 
@@ -82,10 +85,10 @@ for i = [1 2 4]
     height = height + max_z;
 end
 
+%% 输出结果
 length = length / 3;
 width = width / 3;
 height = height / 3;
-
 
 RATIO = (60 / length + 30 / width + 30 / height) / 3;
 fprintf('The length is: %f\n', RATIO * length);

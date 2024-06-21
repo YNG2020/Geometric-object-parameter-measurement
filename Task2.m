@@ -1,5 +1,7 @@
 load 'cleanData.mat' cleanData
 rng(1);
+
+%% 检查数据
 data = [cleanData{7}; cleanData{8}];
 
 % 使用 MATLAB 内置的 pcfitplane 函数
@@ -34,6 +36,7 @@ pcshow(remainingPoints, 'b', 'MarkerSize', 40);
 title('去平面的点云');
 xlabel('X'); ylabel('Y'); zlabel('Z');
 
+%% 分离出平面，然后用PCA方法求出平面的长轴和短轴，并将其投影到水平面上，然后用最小覆盖圆算法求出直径
 diameter = 0; height = 0;
 for i = [7 8]
 
@@ -90,12 +93,14 @@ for i = [7 8]
     diameter = diameter + 2 * radius;
 end
 
+%% 输出结果
 diameter = diameter / 2;
 height = height / 2;
 load RATIO.mat RATIO
 fprintf('The diameter is: %f\n', RATIO * diameter);
 fprintf('The height is: %f\n', RATIO * height);
 
+%% 辅助函数
 function [center, radius] = findMinCircle(points)
     % 主函数，用于找到点集的最小覆盖圆
     % points: 点集（nx2矩阵）
