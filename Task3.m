@@ -92,5 +92,3 @@ deg2 = 2*rad2deg(sinh(lengthHalf / l));
 %% 输出结果
 fprintf("The degree of A is: %f\n", deg2);
 fprintf("The length of B is: %f\n", length * RATIO);
-
-
