@@ -36,8 +36,8 @@ pcshow(remainingPoints, 'b', 'MarkerSize', 40);
 title('去平面的点云');
 xlabel('X'); ylabel('Y'); zlabel('Z');
 
-%% 分离出平面，然后用PCA方法求出长方形平面的长轴和短轴，并将其投影到水平面上，然后把长方形的四个端点找出来即可求得长和宽
-length = 0; width = 0; height = 0;
+%% 分离出平面，然后使用PCA方法降维 + 最小外接矩形求取长和宽
+lengthAll = 0; widthAll = 0; heightAll = 0;
 for i = [1 2 4]
 
     data = cleanData{i};
@@ -47,7 +47,7 @@ for i = [1 2 4]
     
     % 使用 RANSAC 算法检测平面
     maxDistance = 0.005; % 平面距离的阈值
-    [model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, [0 0 1], 'Confidence', 99.999, 'MaxNumTrials', 10000);
+    [model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, 'Confidence', 99.999, 'MaxNumTrials', 10000);
     
     % 分离平面点和平面外点
     planePoints = data(inlierIdx, :); % 平面上的点
@@ -55,6 +55,33 @@ for i = [1 2 4]
 
     points = planePoints;
     
+    % 使用PCA方法降维 + 最小外接矩形求取长和宽
+    [length, width, height] = findLengthAndWidth(points);
+    
+    if length < width
+        tmp = length;
+        length = width;
+        width = tmp;
+    end
+
+    % 计算长宽高
+    lengthAll = length + lengthAll;
+    widthAll = width + widthAll;
+    heightAll = height + heightAll;
+end
+length = lengthAll / 3;
+width = widthAll / 3;
+height = heightAll / 3;
+%% 输出结果
+RATIO = (60 / length + 30 / width + 30 / height) / 3;
+fprintf('The length is: %f\n', RATIO * length);
+fprintf('The width is: %f\n', RATIO * width);
+fprintf('The height is: %f\n', RATIO * height);
+save 'RATIO.mat' RATIO;
+
+%% 辅助函数
+% 使用PCA方法降维 + 最小外接矩形求取长和宽
+function [length, width, height] = findLengthAndWidth(points)
     % 中心化数据
     mean_points = mean(points);
     centered_points = points - mean_points;
@@ -70,36 +97,67 @@ for i = [1 2 4]
     V = V(:, idx);
     
     % 投影数据到前两个主成分
-    projected_points = centered_points * V(:, 1:2);
+    projected_points = double(centered_points * V(:, 1:2));
 
-    figure;
-    hold on
-    scatter(projected_points(:,1), projected_points(:,2), 'filled');
-    axis equal
-
-    % 计算边界点的极值来确定长和宽
-    min_x = min(projected_points(:, 1));
-    max_x = max(projected_points(:, 1));
-    min_y = min(projected_points(:, 2));
-    max_y = max(projected_points(:, 2));
-    max_z = max(points(:, 3));
-
-    plot([min_x, min_x, max_x, max_x, min_x], [max_y, min_y, min_y, max_y, max_y], 'Color', 'r', 'LineWidth', 2)
-    title('投影至点云数据的两个最大特征值对应的特征空间');
+    % 计算点云的凸包
+    k = convhull(projected_points(:,1), projected_points(:,2));
     
+    % 提取凸包点
+    hull_points = projected_points(k, :);
+    
+    % 计算最小外接矩形
+    [minAreaRect, ~] = minBoundingRect(hull_points);
+
     % 计算长宽高
-    length = length + (max_x - min_x);
-    width = width + (max_y - min_y);
-    height = height + max_z;
+    length = norm(minAreaRect(1,:) - minAreaRect(2,:));
+    width = norm(minAreaRect(2,:) - minAreaRect(3,:));
+    height = max(points(:, 3));
+
+    % 绘制点云和最小外接矩形
+    figure;
+    scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
+    hold on;
+    plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
+    title('最小外接矩形');
+    axis equal
+    xlabel('X');
+    ylabel('Y');
+    hold off;
+
 end
 
-%% 输出结果
-length = length / 3;
-width = width / 3;
-height = height / 3;
+% 最小外接矩形算法
+function [mbr, area] = minBoundingRect(pts)
+    % Calculate the minimum bounding rectangle using rotating calipers method
+    K = convhull(pts); % Convex hull
+    pts = pts(K, :); % Convex hull vertices
+    n = size(pts, 1); % Number of vertices
 
-RATIO = (60 / length + 30 / width + 30 / height) / 3;
-fprintf('The length is: %f\n', RATIO * length);
-fprintf('The width is: %f\n', RATIO * width);
-fprintf('The height is: %f\n', RATIO * height);
-save 'RATIO.mat' RATIO;
+    if n < 3
+        error('At least 3 points are needed to form a rectangle.');
+    end
+
+    angles = atan2(pts([2:end, 1], 2) - pts(:, 2), pts([2:end, 1], 1) - pts(:, 1));
+    angles = unique(mod(angles, pi/2)); % Reduce angles to the first quadrant
+
+    minArea = inf;
+    mbr = [];
+
+    for angle = angles'
+        R = [cos(angle), -sin(angle); sin(angle), cos(angle)];
+        rot_pts = (R * pts')';
+        min_pts = min(rot_pts);
+        max_pts = max(rot_pts);
+        area = prod(max_pts - min_pts);
+
+        if area < minArea
+            minArea = area;
+            bounds = [min_pts; max_pts];
+            mbr = [bounds(1,1), bounds(1,2);
+                   bounds(1,1), bounds(2,2);
+                   bounds(2,1), bounds(2,2);
+                   bounds(2,1), bounds(1,2)];
+            mbr = (R' * mbr')';
+        end
+    end
+end

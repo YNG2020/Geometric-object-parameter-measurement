@@ -19,8 +19,8 @@ for i = [21 22 23 24]
 end
 close all
 
-%% 分离出平面，然后用PCA方法求出长方形平面的长轴和短轴，并将其投影到水平面上，然后把长方形的四个端点找出来即可求得长和宽
-length = 0; width = 0; height = 0;
+%% 分离出平面，然后使用PCA方法降维 + 最小外接矩形求取长和宽
+lengthAll = 0; widthAll = 0;
 for i = [22 23]
 
     data = cleanData{i};
@@ -37,39 +37,29 @@ for i = [22 23]
     remainingPoints = data(remainIdx, :); % 平面外的点
 
     points = planePoints;
-    
-    % PCA
-    [V, centered_points] = myPCA(points);
-    % 投影数据到前两个主成分
-    projected_points = centered_points * V(:, 1:2);
+    % 使用PCA方法降维 + 最小外接矩形求取长和宽
+    [length, width] = findLengthAndWidth(points);
 
-    figure;
-    hold on
-    scatter(projected_points(:,1), projected_points(:,2), 'filled');
-    axis equal
-
-    % 计算边界点的极值来确定长和宽
-    min_x = min(projected_points(:, 1));
-    max_x = max(projected_points(:, 1));
-    min_y = min(projected_points(:, 2));
-    max_y = max(projected_points(:, 2));
-
-    plot([min_x, min_x, max_x, max_x, min_x], [max_y, min_y, min_y, max_y, max_y], 'Color', 'r', 'LineWidth', 2)
-    title('投影至点云数据的两个最大特征值对应的特征空间');
+    if length < width
+        tmp = length;
+        length = width;
+        width = tmp;
+    end
     
     % 计算长宽高
-    length = length + (max_x - min_x);
-    width = width + (max_y - min_y);
+    lengthAll = length + lengthAll;
+    widthAll = width + widthAll;
 end
+length = lengthAll / 2;
+width = widthAll / 2;
 
 %% 输出结果
-length = length / 2;
-width = width / 2;
 fprintf('The length is: %f\n', RATIO * length);
 fprintf('The width is: %f\n', RATIO * width);
 
 %% 辅助函数
-function [V, centered_points] = myPCA(points)
+% 使用PCA方法降维 + 最小外接矩形求取长和宽
+function [length, width] = findLengthAndWidth(points)
     % 中心化数据
     mean_points = mean(points);
     centered_points = points - mean_points;
@@ -83,4 +73,68 @@ function [V, centered_points] = myPCA(points)
     % 按特征值大小排序
     [~, idx] = sort(diag(D), 'descend');
     V = V(:, idx);
+    
+    % 投影数据到前两个主成分
+    projected_points = double(centered_points * V(:, 1:2));
+
+    % 计算点云的凸包
+    k = convhull(projected_points(:,1), projected_points(:,2));
+    
+    % 提取凸包点
+    hull_points = projected_points(k, :);
+    
+    % 计算最小外接矩形
+    [minAreaRect, ~] = minBoundingRect(hull_points);
+
+    % 计算长宽高
+    length = norm(minAreaRect(1,:) - minAreaRect(2,:));
+    width = norm(minAreaRect(2,:) - minAreaRect(3,:));
+
+    % 绘制点云和最小外接矩形
+    figure;
+    scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
+    hold on;
+    plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
+    title('最小外接矩形');
+    axis equal
+    xlabel('X');
+    ylabel('Y');
+    hold off;
+
+end
+
+% 最小外接矩形算法
+function [mbr, area] = minBoundingRect(pts)
+    % Calculate the minimum bounding rectangle using rotating calipers method
+    K = convhull(pts); % Convex hull
+    pts = pts(K, :); % Convex hull vertices
+    n = size(pts, 1); % Number of vertices
+
+    if n < 3
+        error('At least 3 points are needed to form a rectangle.');
+    end
+
+    angles = atan2(pts([2:end, 1], 2) - pts(:, 2), pts([2:end, 1], 1) - pts(:, 1));
+    angles = unique(mod(angles, pi/2)); % Reduce angles to the first quadrant
+
+    minArea = inf;
+    mbr = [];
+
+    for angle = angles'
+        R = [cos(angle), -sin(angle); sin(angle), cos(angle)];
+        rot_pts = (R * pts')';
+        min_pts = min(rot_pts);
+        max_pts = max(rot_pts);
+        area = prod(max_pts - min_pts);
+
+        if area < minArea
+            minArea = area;
+            bounds = [min_pts; max_pts];
+            mbr = [bounds(1,1), bounds(1,2);
+                   bounds(1,1), bounds(2,2);
+                   bounds(2,1), bounds(2,2);
+                   bounds(2,1), bounds(1,2)];
+            mbr = (R' * mbr')';
+        end
+    end
 end

@@ -56,21 +56,14 @@ title('去噪结果');
 pcshow(cleanPlane, 'g', 'MarkerSize', 40);
 pcshow(other, 'r', 'MarkerSize', 40);
 
-%% 使用PCA方法降维 + 使用最小覆盖圆求取直径
-[PCAPlane] = myPCA(cleanPlane);
+%% 使用PCA方法降维 + 最小外接矩形求取长和宽
+[height, width] = findLengthAndWidth(cleanPlane);
 
-% 计算边界点的极值来确定圆柱的高
-min_x = min(PCAPlane(:, 1));
-max_x = max(PCAPlane(:, 1));
-
-height = max_x - min_x;
-
-% 绘制结果
-figure;
-scatter(PCAPlane(:,1), PCAPlane(:,2), 'filled');
-title('投影至点云数据的两个最大特征值对应的特征空间');
-axis equal;
-hold off;
+if height < width
+    tmp = height;
+    height = width;
+    width = tmp;
+end
 
 %% 输出结果
 fprintf('The height is: %f\n', RATIO * height);
@@ -165,8 +158,8 @@ function [maxDiff] = findMaxDiff(x)
     maxDiff = max(differences);
 end
 
-%% 辅助函数：PCA
-function [projected_points] = myPCA(points)
+%% 辅助函数
+function [length, width] = findLengthAndWidth(points)
     % 中心化数据
     mean_points = mean(points);
     centered_points = points - mean_points;
@@ -180,5 +173,68 @@ function [projected_points] = myPCA(points)
     % 按特征值大小排序
     [~, idx] = sort(diag(D), 'descend');
     V = V(:, idx);
-    projected_points = centered_points * V(:, 1:2);
+    
+    % 投影数据到前两个主成分
+    projected_points = double(centered_points * V(:, 1:2));
+
+    % 计算点云的凸包
+    k = convhull(projected_points(:,1), projected_points(:,2));
+    
+    % 提取凸包点
+    hull_points = projected_points(k, :);
+    
+    % 计算最小外接矩形
+    [minAreaRect, ~] = minBoundingRect(hull_points);
+
+    % 计算长宽高
+    length = norm(minAreaRect(1,:) - minAreaRect(2,:));
+    width = norm(minAreaRect(2,:) - minAreaRect(3,:));
+
+    % 绘制点云和最小外接矩形
+    figure;
+    scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
+    hold on;
+    plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
+    title('最小外接矩形');
+    axis equal
+    xlabel('X');
+    ylabel('Y');
+    hold off;
+
+end
+
+% 最小外接矩形算法
+function [mbr, area] = minBoundingRect(pts)
+    % Calculate the minimum bounding rectangle using rotating calipers method
+    K = convhull(pts); % Convex hull
+    pts = pts(K, :); % Convex hull vertices
+    n = size(pts, 1); % Number of vertices
+
+    if n < 3
+        error('At least 3 points are needed to form a rectangle.');
+    end
+
+    angles = atan2(pts([2:end, 1], 2) - pts(:, 2), pts([2:end, 1], 1) - pts(:, 1));
+    angles = unique(mod(angles, pi/2)); % Reduce angles to the first quadrant
+
+    minArea = inf;
+    mbr = [];
+
+    for angle = angles'
+        R = [cos(angle), -sin(angle); sin(angle), cos(angle)];
+        rot_pts = (R * pts')';
+        min_pts = min(rot_pts);
+        max_pts = max(rot_pts);
+        area = prod(max_pts - min_pts);
+
+        if area < minArea
+            minArea = area;
+            bounds = [min_pts; max_pts];
+            mbr = [bounds(1,1), bounds(1,2);
+                   bounds(1,1), bounds(2,2);
+                   bounds(2,1), bounds(2,2);
+                   bounds(2,1), bounds(1,2)];
+            mbr = (R' * mbr')';
+        end
+    end
 end
