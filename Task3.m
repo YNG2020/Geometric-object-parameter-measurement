@@ -1,6 +1,8 @@
-load 'cleanData.mat' cleanData
-rng(1);
 close all
+clear
+load data/RATIO.mat RATIO
+load data/cleanData.mat cleanData
+rng(1);
 %% 求三个平面的法向量
 
 % 以下通过取定点，粗糙地求得三个平面的法向量
@@ -17,6 +19,8 @@ normalVector(3, :) = cross(v1, v2) / norm(cross(v1, v2));
 
 % 可视化结果
 figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data");
+data = [cleanData{11}];
+ptCloud = pointCloud(data); % 将数据转换为点云对象
 
 % 原始点云数据
 subplot(1, 3, 1);
@@ -33,7 +37,6 @@ hold on
 color = ['r', 'g', 'b'];
 A = zeros(3, 3);
 b = zeros(3, 1);
-data = [cleanData{11}];
 % 精细地求得三个平面的法向量
 for i = 1 : 3
     
@@ -54,8 +57,6 @@ for i = 1 : 3
     pcshow(planePoints, color(i), 'MarkerSize', 40);
 
 end
-
-load RATIO.mat RATIO
 
 %% 求边长
 

@@ -1,6 +1,7 @@
-load 'cleanData.mat' cleanData
-rng(1);
 close all
+clear
+load 'data/cleanData.mat' cleanData
+rng(1);
 %% 检查数据
 data = [cleanData{1}; cleanData{2}; cleanData{4}];
 
@@ -77,7 +78,7 @@ RATIO = (60 / length + 30 / width + 30 / height) / 3;
 fprintf('The length is: %f\n', RATIO * length);
 fprintf('The width is: %f\n', RATIO * width);
 fprintf('The height is: %f\n', RATIO * height);
-save 'RATIO.mat' RATIO;
+save 'data/RATIO.mat' RATIO;
 
 %% 辅助函数
 % 使用PCA方法降维 + 最小外接矩形求取长和宽

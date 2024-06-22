@@ -1,6 +1,8 @@
-load 'cleanData.mat' cleanData
-rng(1);
 close all
+clear
+load data/RATIO.mat RATIO
+load data/cleanData.mat cleanData
+rng(1);
 %% 检查数据
 data = [cleanData{7}; cleanData{8}];
 
@@ -96,7 +98,6 @@ end
 diameter = diameter / 2;
 height = height / 2;
 %% 输出结果
-load RATIO.mat RATIO
 fprintf('The diameter is: %f\n', RATIO * diameter);
 fprintf('The height is: %f\n', RATIO * height);
 

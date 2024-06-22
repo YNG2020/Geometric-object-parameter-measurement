@@ -1,7 +1,8 @@
-load 'cleanData.mat' cleanData
-load 'RATIO.mat' RATIO;
-rng(1);
 close all
+clear
+load data/RATIO.mat RATIO
+load data/cleanData.mat cleanData
+rng(1);
 %% 检查数据
 for i = [21 24]
     data = cleanData{i};

@@ -1,7 +1,8 @@
-load 'cleanData.mat' cleanData
-load RATIO.mat RATIO
-rng(1);
 close all
+clear
+load data/RATIO.mat RATIO
+load data/cleanData.mat cleanData
+rng(1);
 %% 检查数据
 data = [cleanData{13}; cleanData{14}; cleanData{15}; cleanData{16}];
 

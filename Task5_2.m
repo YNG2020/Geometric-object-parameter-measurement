@@ -1,20 +1,13 @@
-load 'cleanData.mat' cleanData
-load 'RATIO.mat' RATIO;
-rng(1);
 close all
+clear
+load data/RATIO.mat RATIO
+load data/cleanData.mat cleanData
+rng(1);
 %% 分离出长方形块
 data = cleanData{20};
 
 % 使用 MATLAB 内置的 pcfitplane 函数
 ptCloud = pointCloud(data); % 将数据转换为点云对象
-
-% 使用 RANSAC 算法检测平面
-maxDistance = 0.005; % 平面距离的阈值
-[model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, [0 0 1], 'Confidence', 99.999, 'MaxNumTrials', 10000);
-
-% 分离平面点和平面外点
-planePoints = data(inlierIdx, :); % 平面上的点
-remainingPoints = data(remainIdx, :); % 平面外的点
 
 % 可视化结果
 figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data");
@@ -45,10 +38,6 @@ p32 = [0.015251308679581,4.596039652824402e-04,0.053958117961884];
 p33 = [0.018285453319550,0.007391870021820,0.038425326347351];
 normalVector3 = calNormalVector(p31, p32, p33);
 
-p41 = [0.010593384504318,0.008413165807724,0.023686230182648];
-p42 = [0.009290814399719,-0.018893346190453,0.024638593196869];
-p43 = [-0.003770887851715,-0.024375110864639,0.020918548107147];
-
 p41 = [0.025308936834335,-0.012671858072281,0.029289424419403];
 p42 = [-0.016464646464646,-0.005784523673356,0.015656565656566];
 p43 = [0.019673807546496,0.015454545454545,0.020505050505051];
@@ -76,11 +65,8 @@ for i = 1 : size(data, 1)
     end
 end
 
-inlierIdx = find(inlierIdx);
-outlierIdxIdx = find(outlierIdxIdx);
-
-cuboid = data(inlierIdx, :);
-Tri_Prism = data(outlierIdxIdx, :);
+cuboid = data(inlierIdx == 1, :);
+Tri_Prism = data(outlierIdxIdx == 1, :);
 
 % 分离点云数据
 subplot(1, 3, 2);
@@ -161,8 +147,6 @@ P = [p1 p2 p3 p4 p5 p6];
 for i = 1 : 6
     scatter3(P(1, i), P(2, i), P(3, i), 'filled', 'w')
 end
-
-
 
 len_A = (sqrt((p2 - p3)' * (p2 - p3)) + sqrt((p5 - p6)' * (p5 - p6))) / 2;
 len_B = (sqrt((p1 - p3)' * (p1 - p3)) + sqrt((p4 - p6)' * (p4 - p6))) / 2;
