@@ -5,7 +5,7 @@ rng(1);
 close all
 cleanData = cell(1, 28);
 % 以下是数据预处理
-for i = [21 22 23 24]
+for i = 1 : 28
     data = allData{i};
     
     % 2. 使用RANSAC算法检测平面
@@ -103,7 +103,7 @@ for i = [21 22 23 24]
     pcshow(remainingPoints, 'b', 'MarkerSize', 40);
     title('去平面的点云（旋转至水平面）');
     xlabel('X'); ylabel('Y'); zlabel('Z');
-    % % savefig("fig" + num2str(i-1) + ".fig");
+    savefig("fig" + num2str(i-1) + ".fig");
 end
 
-% save 'cleanData.mat' cleanData;
+save 'cleanData.mat' cleanData;

@@ -110,11 +110,6 @@ cos_theta = dot_product / (norm_n1 * norm_n2);
 theta_radians = acos(cos_theta);
 deg1 = rad2deg(theta_radians);
 
-P = [x x1 x2];
-for i = 1 : 3
-    scatter3(P(1, i), P(2, i), P(3, i), 'filled', 'w')
-end
-
 %% 求角度方法2（三角函数法）
 x = A \ b;
 h = RATIO * x(3);
@@ -122,6 +117,10 @@ lengthHalf = length * RATIO / 2;
 l = sqrt(h^2 + lengthHalf^2 + lengthHalf^2);
 deg2 = 2*rad2deg(sinh(lengthHalf / l));
 
+P = [x x1 x2];
+for i = 1 : 3
+    scatter3(P(1, i), P(2, i), P(3, i), 'filled', 'w')
+end
 %% 输出结果
 fprintf("The degree of A is: %f\n", deg2);
 fprintf("The length of B is: %f\n", length * RATIO);
