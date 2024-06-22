@@ -158,10 +158,14 @@ for i = 1 : 6
     scatter3(P(1, i), P(2, i), P(3, i), 'filled', 'w')
 end
 
-len_A = (sqrt((p1 - p2)' * (p1 - p2)) + sqrt((p4 - p5)' * (p4 - p5))) / 2;
-len_B = (sqrt((p1 - p3)' * (p1 - p3)) + sqrt((p4 - p6)' * (p4 - p6))) / 2;
-len_C = (sqrt((p2 - p3)' * (p2 - p3)) + sqrt((p5 - p6)' * (p5 - p6))) / 2;
-len_D = (sqrt((p1 - p4)' * (p1 - p4)) + sqrt((p2 - p5)' * (p2 - p5)) +sqrt((p3 - p6)' * (p3 - p6))) / 3;
+% len_A = (sqrt((p1 - p2)' * (p1 - p2)) + sqrt((p4 - p5)' * (p4 - p5))) / 2;
+% len_B = (sqrt((p1 - p3)' * (p1 - p3)) + sqrt((p4 - p6)' * (p4 - p6))) / 2;
+% len_C = (sqrt((p2 - p3)' * (p2 - p3)) + sqrt((p5 - p6)' * (p5 - p6))) / 2;
+
+len_A = sqrt((p1 - p2)' * (p1 - p2));
+len_B = sqrt((p1 - p3)' * (p1 - p3));
+len_C = sqrt((p2 - p3)' * (p2 - p3));
+len_D = (sqrt((p1 - p4)' * (p1 - p4)) + sqrt((p2 - p5)' * (p2 - p5)) + sqrt((p3 - p6)' * (p3 - p6))) / 3;
 %% 输出数据
 fprintf('The length of A is: %f\n', RATIO * len_A);
 fprintf('The length of B is: %f\n', RATIO * len_B);
