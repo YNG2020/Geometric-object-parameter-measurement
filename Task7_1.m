@@ -185,6 +185,7 @@ function [projected_points] = myPCA(points)
     % 按特征值大小排序
     [~, idx] = sort(diag(D), 'descend');
     V = V(:, idx);
+    % 将数据投影至前两个最大的特征值构成的特征空间
     projected_points = centered_points * V(:, 1:2);
 end
 
