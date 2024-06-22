@@ -1,6 +1,6 @@
 load 'cleanData.mat' cleanData
 rng(1);
-
+close all
 %% 检查数据
 data = [cleanData{1}; cleanData{2}; cleanData{4}];
 
@@ -71,13 +71,21 @@ for i = [1 2 4]
     
     % 投影数据到前两个主成分
     projected_points = centered_points * V(:, 1:2);
-    
+
+    figure;
+    hold on
+    scatter(projected_points(:,1), projected_points(:,2), 'filled');
+    axis equal
+
     % 计算边界点的极值来确定长和宽
     min_x = min(projected_points(:, 1));
     max_x = max(projected_points(:, 1));
     min_y = min(projected_points(:, 2));
     max_y = max(projected_points(:, 2));
     max_z = max(points(:, 3));
+
+    plot([min_x, min_x, max_x, max_x, min_x], [max_y, min_y, min_y, max_y, max_y], 'Color', 'r', 'LineWidth', 2)
+    title('投影至点云数据的两个最大特征值对应的特征空间');
     
     % 计算长宽高
     length = length + (max_x - min_x);

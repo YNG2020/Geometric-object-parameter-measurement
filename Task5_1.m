@@ -1,7 +1,7 @@
 load 'cleanData.mat' cleanData
 load 'RATIO.mat' RATIO;
 rng(1);
-
+close all
 %% 检查数据
 for i = [17 18 19 20]
     data = cleanData{i};

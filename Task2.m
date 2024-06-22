@@ -1,6 +1,6 @@
 load 'cleanData.mat' cleanData
 rng(1);
-
+close all
 %% 检查数据
 data = [cleanData{7}; cleanData{8}];
 

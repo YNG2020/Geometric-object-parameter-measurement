@@ -1,6 +1,6 @@
 load 'cleanData.mat' cleanData
 rng(1);
-
+close all
 %% 求三个平面的法向量
 
 % 以下通过取定点，粗糙地求得三个平面的法向量
