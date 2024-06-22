@@ -93,9 +93,9 @@ for i = [7 8]
     diameter = diameter + 2 * radius;
 end
 
-%% 输出结果
 diameter = diameter / 2;
 height = height / 2;
+%% 输出结果
 load RATIO.mat RATIO
 fprintf('The diameter is: %f\n', RATIO * diameter);
 fprintf('The height is: %f\n', RATIO * height);
