@@ -23,6 +23,7 @@
 - 第7个任务中要被测量的物体是手持物体拍摄的。
 
 如下图：
+
 ![case1](figure/f11.png "case1"){height=174} ![case2](figure/f12.png "case2"){height=174} ![case3](figure/f13.png "case3"){height=174}
 
 ## 2 算法介绍
