@@ -116,5 +116,23 @@ end
 
 在对点云的圆平面进行检测时，往往会遇到圆平面的边界难以检测的问题，如下图：
 ![alt text](figure/f16.png)
-我们显然对这个点云数据集代表的是一个圆平面这个猜测十分有把握，但是由于部分点云没有检测到或被处理掉，导致圆的边界有所缺失，此时，我们很难通过精确的数学方程来解决这个问题。最小圆覆盖算法应运而生。
-最小圆覆盖算法解决的问题是：给定$n$个点的平面坐标，求一个半径最小的圆，把$n$个点全部包围。
+我们显然对这个点云数据集代表的是一个圆平面这个猜测十分有把握，但是由于部分点云没有检测到或被处理掉，导致圆的边界有所缺失，此时，我们很难通过精确的数学方程来解决这个问题。这个问题可以抽象为：给定$n$个点的平面坐标，求一个半径最小的圆，把$n$个点全部包围。常用算法是 [Welzl's algorithm](http://www.sunshine2k.de/coding/java/Welzl/Welzl.html)。这里仅给出该方法的伪代码（如果从递归的角度去思考，也许有助于理解该方法的证明）：
+
+```Fortran
+/*
+ * Calculates the sed of a set of Points. Call initially with R = empty set.
+ * P is the set of points in the plane. R is the set of points lying on the boundary of the current circle.
+ */
+
+function sed(P,R)
+{
+    if (P is empty or |R| = 3) then
+         D := calcDiskDirectly(R)
+    else
+        choose a p from P randomly;
+        D := sed(P - {p}, R);
+        if (p lies NOT inside D) then
+            D := sed(P - {p}, R u {p});
+    return D;
+}
+```

@@ -114,16 +114,19 @@ end
 
 function [center, radius] = minCircleHelper(P, R)
     % 递归辅助函数，P是剩余点集，R是边界上的点
-    if isempty(P) || numel(R) == 3
+    if isempty(P) || size(R, 1) == 3
         % 基本情况：如果没有点或边界上有三个点
         [center, radius] = getCircle(R);
         return;
     end
+    if (size(R, 1) > 3)
+        a = 1;
+    end
     
     % 随机选择一个点进行递归
-    P = P(randperm(size(P, 1)), :); % 打乱点集顺序
-    p = P(end, :); % 选择最后一个点
-    P(end, :) = []; % 从点集P中移除这个点
+    idx = randi(size(P, 1));
+    p = P(idx, :);
+    P(idx, :) = [];
     
     [center, radius] = minCircleHelper(P, R);
     
