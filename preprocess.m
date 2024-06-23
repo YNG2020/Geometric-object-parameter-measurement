@@ -5,7 +5,7 @@ clear
 load 'data/allData.mat' allData
 cleanData = cell(1, 28);
 % 以下是数据预处理
-for i = 1 : 28
+for i = 7
     data = allData{i};
     
     % 2. 使用RANSAC算法检测平面
@@ -89,20 +89,20 @@ for i = 1 : 28
     % 原始点云数据
     subplot(1, 3, 1);
     pcshow(ptCloud, 'MarkerSize', 40);
-    title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
     
     % 检测到的平面点
     subplot(1, 3, 2);
     pcshow(planePoints, 'r', 'MarkerSize', 40);
-    title('检测到的平面点（旋转至水平面）');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('检测到的平面点（旋转至水平面）', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
     
     % 去除了平面的点云数据
     subplot(1, 3, 3);
-    pcshow(remainingPoints, 'b', 'MarkerSize', 40);
-    title('去平面的点云（旋转至水平面）');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    pcshow(remainingPoints, 'g', 'MarkerSize', 40);
+    title('去平面的点云（旋转至水平面）', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
-save 'data/cleanData.mat' cleanData;
+% save 'data/cleanData.mat' cleanData;
