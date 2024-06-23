@@ -15,8 +15,8 @@ for i = [21 24]
 
     % 原始点云数据
     pcshow(ptCloud, 'MarkerSize', 40);
-    title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 close all
 %% 分离出三棱柱
@@ -28,8 +28,8 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 xlim = [-0.025 0.04];
 ylim = [-0.03 0.03];
@@ -60,8 +60,8 @@ pcshow(half_cylinder, 'r', 'MarkerSize', 40);
 hold on
 plotPlane(a, b, c, d, xlim, ylim, zlim, 'y')
 pcshow(Tri_Prism, 'g', 'MarkerSize', 40);
-title('分离点云数据');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('分离点云数据', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 %% 精细地求得四个平面的法向量
 
@@ -104,6 +104,7 @@ normalVector(3, :) = normalVector3;
 
 subplot(1, 3, 3);
 hold on
+title('检测出5个平面并求其交点', 'FontSize', 15);
 plotPlane(aa, bb, cc, dd, xlim, ylim, zlim, 'y')
 plotPlane(aa, bb, cc, 0, xlim, ylim, zlim, 'm')
 color = ['r', 'g', 'b'];
@@ -229,7 +230,7 @@ function plotPlane(a, b, c, d, xlim, ylim, zlim, color)
     end
     % 绘制平面
     surf(X, Y, Z, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'FaceColor', color);
-
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [maxDiff] = findMaxDiff(x)

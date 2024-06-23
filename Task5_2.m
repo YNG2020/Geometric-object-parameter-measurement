@@ -15,8 +15,8 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 xlim = [-0.025 0.04];
 ylim = [-0.03 0.03];
@@ -74,8 +74,8 @@ pcshow(cuboid, 'g', 'MarkerSize', 40);
 hold on
 plotPlane(a, b, c, d, xlim, ylim, zlim, 'y')
 pcshow(Tri_Prism, 'r', 'MarkerSize', 40);
-title('分离点云数据');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('分离点云数据', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 %% 精细地求得五个平面的法向量
 A = zeros(5, 3);
@@ -153,10 +153,10 @@ len_B = (sqrt((p1 - p3)' * (p1 - p3)) + sqrt((p4 - p6)' * (p4 - p6))) / 2;
 len_C = (sqrt((p1 - p2)' * (p1 - p2)) + sqrt((p4 - p5)' * (p4 - p5))) / 2;
 len_D = sqrt((p1 - p4)' * (p1 - p4));
 %% 输出数据
-fprintf('The length of A is: %f\n', RATIO * len_A);
-fprintf('The length of B is: %f\n', RATIO * len_B);
-fprintf('The length of C is: %f\n', RATIO * len_C);
-fprintf('The length of D is: %f\n', RATIO * len_D);
+fprintf('The length of A is: %f mm\n', RATIO * len_A);
+fprintf('The length of B is: %f mm\n', RATIO * len_B);
+fprintf('The length of C is: %f mm\n', RATIO * len_C);
+fprintf('The length of D is: %f mm\n', RATIO * len_D);
 
 %% 辅助函数
 function [normalVector] = calNormalVector(p1, p2, p3)
@@ -213,8 +213,9 @@ function plotPlane(a, b, c, d, xlim, ylim, zlim, color)
         Z = -(a * X + b * Y + d) / c;
     end
     % 绘制平面
+    title('检测出5个平面并求其交点', 'FontSize', 15);
     surf(X, Y, Z, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'FaceColor', color);
-
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [maxDiff] = findMaxDiff(x)

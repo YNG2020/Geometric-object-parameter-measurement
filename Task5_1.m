@@ -16,22 +16,11 @@ for i = [17 18 19 20]
     % 原始点云数据
     pcshow(ptCloud, 'MarkerSize', 40);
     title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 close all
 %% 分离出长方形块
 data = cleanData{19};
-
-% 使用 MATLAB 内置的 pcfitplane 函数
-ptCloud = pointCloud(data); % 将数据转换为点云对象
-
-% 使用 RANSAC 算法检测平面
-maxDistance = 0.005; % 平面距离的阈值
-[model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, [0 0 1], 'Confidence', 99.999, 'MaxNumTrials', 10000);
-
-% 分离平面点和平面外点
-planePoints = data(inlierIdx, :); % 平面上的点
-remainingPoints = data(remainIdx, :); % 平面外的点
 
 % 可视化结果
 figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data");
@@ -39,14 +28,8 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
-
-% 检测到的平面点
-subplot(1, 3, 2);
-pcshow(planePoints, 'b', 'MarkerSize', 40);
-title('检测到的平面点');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 % 构建长方体与三棱柱的分离面
 p1 = [0.009871631860733,0.018593976274133,0.010984361171722];
@@ -56,11 +39,11 @@ p3 = [0.005797982215881,0.015077436342835,0.014956891536713];
 [a, b, c, d] = constructPlaneEquation(p1, p2, p3);
 
 % 分离长方体与三棱柱
-inlierIdx = zeros(size(planePoints, 1), 1); outlierIdxIdx = zeros(size(planePoints, 1), 1);
-for i = 1 : size(planePoints, 1)
-    p1 = planePoints(i, 1);
-    p2 = planePoints(i, 2);
-    p3 = planePoints(i, 3);
+inlierIdx = zeros(size(data, 1), 1); outlierIdxIdx = zeros(size(data, 1), 1);
+for i = 1 : size(data, 1)
+    p1 = data(i, 1);
+    p2 = data(i, 2);
+    p3 = data(i, 3);
     if a * p1 + b * p2 + c * p3 + d < 0
         inlierIdx(i) = 1;
     else
@@ -68,28 +51,44 @@ for i = 1 : size(planePoints, 1)
     end
 end
 
-inlierIdx = find(inlierIdx);
-outlierIdxIdx = find(outlierIdxIdx);
-
-cuboid = planePoints(inlierIdx, :);
-Tri_Prism = planePoints(outlierIdxIdx, :);
+cuboid = data(inlierIdx == 1, :);
+Tri_Prism = data(outlierIdxIdx == 1, :);
 
 % 分离点云数据
-subplot(1, 3, 3);
+subplot(1, 3, 2);
 pcshow(cuboid, 'g', 'MarkerSize', 40);
 hold on
 plotPlane(a, b, c, d)
 pcshow(Tri_Prism, 'r', 'MarkerSize', 40);
-title('分离点云数据');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('分离点云数据', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
+
+% 使用 MATLAB 内置的 pcfitplane 函数
+ptCloud = pointCloud(cuboid); % 将数据转换为点云对象
+
+% 使用 RANSAC 算法检测平面
+maxDistance = 0.005; % 平面距离的阈值
+[model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, 'Confidence', 99.999, 'MaxNumTrials', 10000);
+
+% 分离平面点和平面外点
+planePoints = cuboid(inlierIdx, :); % 平面上的点
+remainingPoints = cuboid(remainIdx, :); % 平面外的点
+
+% 检测到的平面点
+subplot(1, 3, 3);
+hold on
+pcshow(planePoints, 'g', 'MarkerSize', 40);
+pcshow(remainingPoints, 'r', 'MarkerSize', 40);
+title('进一步去噪', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 % 使用PCA方法降维 + 最小外接矩形求取长和宽
-[length, width, height] = findLengthAndWidth(cuboid);
+[length, width, height] = findLengthAndWidth(planePoints);
 
 %% 输出数据
-fprintf('The length of cuboid is: %f\n', RATIO * length);
-fprintf('The width of cuboid is: %f\n', RATIO * width);
-fprintf('The height of cuboid is: %f\n', RATIO * height);
+fprintf('The length of cuboid is: %f mm\n', RATIO * length);
+fprintf('The width of cuboid is: %f mm\n', RATIO * width);
+fprintf('The height of cuboid is: %f mm\n', RATIO * height);
 %% 辅助函数
 function [a, b, c, d] = constructPlaneEquation(P1, P2, P3)
     % 输入：三个点，P1, P2, P3，格式为 [x, y, z]
@@ -164,7 +163,7 @@ function [length, width, height] = findLengthAndWidth(points)
     scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
     hold on;
     plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
-    title('最小外接矩形');
+    title('PCA + 最小外接矩形算法', 'FontSize', 15);
     axis equal
     xlabel('X');
     ylabel('Y');

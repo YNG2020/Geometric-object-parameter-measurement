@@ -5,7 +5,7 @@ clear
 load 'data/allData.mat' allData
 cleanData = cell(1, 28);
 % 以下是数据预处理
-for i = 7
+for i = 1 : 28
     data = allData{i};
     
     % 2. 使用RANSAC算法检测平面
