@@ -91,31 +91,24 @@ normalVector3 = calNormalVector(p31, p32, p33);
 p41 = [0.019968658685684,-0.026852309703827,0.056097447872162];
 p42 = [0.031359493732452,-0.023495547473431,0.050097882747650];
 p43 = [0.018998473882675,-0.014035085216165,0.054688513278961];
-
-% 顶面和底面无法检测出来(不清楚原因)，只能直接在顶面上取3点来替代，底面则认为与顶面平行，且过原点
-[aa, bb, cc, dd] = constructPlaneEquation(p41, p42, p43); 
-A(4, :) = [aa, bb, cc]; b(4) = -dd;
-A(5, :) = [aa, bb, cc]; b(5) = 0;
+normalVector4 = calNormalVector(p41, p42, p43);
 
 normalVector = zeros(5, 3);
 normalVector(1, :) = normalVector1;
 normalVector(2, :) = normalVector2;
 normalVector(3, :) = normalVector3;
+normalVector(4, :) = normalVector4;
 
 subplot(1, 3, 3);
 hold on
 title('检测出5个平面并求其交点', 'FontSize', 15);
-plotPlane(aa, bb, cc, dd, xlim, ylim, zlim, 'y')
-plotPlane(aa, bb, cc, 0, xlim, ylim, zlim, 'm')
-color = ['r', 'g', 'b'];
-for i = 1 : 3
+color = ['r', 'g', 'b', 'y', 'm'];
+for i = 1 : 4
     
     % 使用 RANSAC 算法检测平面
     maxDistance = 0.001; % 平面距离的阈值
-
-    ptCloud = pointCloud(Tri_Prism);
+    ptCloud = pointCloud(double(Tri_Prism));
     [model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, normalVector(i, :), 1, 'Confidence', 99.99, 'MaxNumTrials', 10000);
-
     A(i, :) = model.Normal;
     b(i) = -model.Parameters(4);
 
@@ -124,6 +117,8 @@ for i = 1 : 3
     pcshow(planePoints, color(i), 'MarkerSize', 40);
     plotPlane(model.Parameters(1), model.Parameters(2), model.Parameters(3), model.Parameters(4), xlim, ylim, zlim, color(i))
 end
+A(5, :) = A(4, :); b(5) = 0;
+plotPlane(A(5, 1), A(5, 2), A(5, 3), b(5), xlim, ylim, zlim, color(5))
 
 %% 通过5个平面相互之间的交点确定出三棱柱的形状
 A1 = [A(1, :); A(2, :); A(4, :)];
@@ -169,10 +164,10 @@ len_B = sqrt((p1 - p3)' * (p1 - p3));
 len_C = sqrt((p2 - p3)' * (p2 - p3));
 len_D = (sqrt((p1 - p4)' * (p1 - p4)) + sqrt((p2 - p5)' * (p2 - p5)) + sqrt((p3 - p6)' * (p3 - p6))) / 3;
 %% 输出数据
-fprintf('The length of A is: %f\n', RATIO * len_A);
-fprintf('The length of B is: %f\n', RATIO * len_B);
-fprintf('The length of C is: %f\n', RATIO * len_C);
-fprintf('The length of D is: %f\n', RATIO * len_D);
+fprintf('The length of A is: %f mm\n', RATIO * len_A);
+fprintf('The length of B is: %f mm\n', RATIO * len_B);
+fprintf('The length of C is: %f mm\n', RATIO * len_C);
+fprintf('The length of D is: %f mm\n', RATIO * len_D);
 
 %% 辅助函数
 function [normalVector] = calNormalVector(p1, p2, p3)

@@ -15,12 +15,13 @@ for i = [21 22 23 24]
 
     % 原始点云数据
     pcshow(ptCloud, 'MarkerSize', 40);
-    title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 close all
 
 %% 分离出平面，然后使用PCA方法降维 + 最小外接矩形求取长和宽
+
 lengthAll = 0; widthAll = 0;
 for i = [22 23]
 
@@ -29,13 +30,29 @@ for i = [22 23]
     % 使用 MATLAB 内置的 pcfitplane 函数
     ptCloud = pointCloud(data); % 将数据转换为点云对象
     
+    figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data");
+    subplot(1, 2, 1)
+    % 原始点云数据
+    pcshow(ptCloud, 'MarkerSize', 40);
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
+
     % 使用 RANSAC 算法检测平面
-    maxDistance = 0.005; % 平面距离的阈值
-    [model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, [0 0 1], 'Confidence', 99.999, 'MaxNumTrials', 10000);
+    maxDistance = 0.002; % 平面距离的阈值
+    [model, inlierIdx, remainIdx] = pcfitplane(ptCloud, maxDistance, 'Confidence', 99.999, 'MaxNumTrials', 10000);
     
     % 分离平面点和平面外点
     planePoints = data(inlierIdx, :); % 平面上的点
     remainingPoints = data(remainIdx, :); % 平面外的点
+
+    subplot(1, 2, 2)
+    % 原始点云数据
+    pcshow(planePoints, 'g', 'MarkerSize', 40);
+    hold on
+    pcshow(remainingPoints, 'r', 'MarkerSize', 40);
+    hold off
+    title('检测到的平面点', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
     points = planePoints;
     % 使用PCA方法降维 + 最小外接矩形求取长和宽
@@ -55,8 +72,8 @@ length = lengthAll / 2;
 width = widthAll / 2;
 
 %% 输出结果
-fprintf('The length is: %f\n', RATIO * length);
-fprintf('The width is: %f\n', RATIO * width);
+fprintf('The length is: %f mm\n', RATIO * length);
+fprintf('The width is: %f mm\n', RATIO * width);
 
 %% 辅助函数
 % 使用PCA方法降维 + 最小外接矩形求取长和宽
@@ -96,7 +113,7 @@ function [length, width] = findLengthAndWidth(points)
     scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
     hold on;
     plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
-    title('最小外接矩形');
+    title('PCA + 最小外接矩形算法', 'FontSize', 15);
     axis equal
     xlabel('X');
     ylabel('Y');
