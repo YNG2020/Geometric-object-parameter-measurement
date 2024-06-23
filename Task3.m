@@ -25,13 +25,13 @@ ptCloud = pointCloud(data); % 将数据转换为点云对象
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 % 检测到的平面点
 subplot(1, 3, 2);
-title('检测到的平面点');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('检测到的三个平面上的点', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 hold on
 
 color = ['r', 'g', 'b'];
@@ -123,8 +123,9 @@ for i = 1 : 3
     scatter3(P(1, i), P(2, i), P(3, i), 'filled', 'w')
 end
 %% 输出结果
-fprintf("The degree of A is: %f\n", deg2);
-fprintf("The length of B is: %f\n", length * RATIO);
+fprintf("The degree of A calculated by trigonometric function is: %f°\n", deg1);
+fprintf("The degree of A calculated by intersection line is: %f°\n", deg2);
+fprintf("The length of B is: %f mm\n", length * RATIO);
 
 %% 辅助函数
 function plotPlane(a, b, c, d, xlim, ylim, zlim, color)
@@ -157,7 +158,8 @@ function plotPlane(a, b, c, d, xlim, ylim, zlim, color)
     end
     % 绘制平面
     surf(X, Y, Z, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'FaceColor', color);
-
+    title('平面的交线与交点', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [maxDiff] = findMaxDiff(x)

@@ -20,22 +20,16 @@ remainingPoints = data(remainIdx, :); % 平面外的点
 figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data");
 
 % 原始点云数据
-subplot(1, 3, 1);
+subplot(1, 2, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 % 检测到的平面点
-subplot(1, 3, 2);
+subplot(1, 2, 2);
 pcshow(planePoints, 'r', 'MarkerSize', 40);
-title('检测到的平面点');
-xlabel('X'); ylabel('Y'); zlabel('Z');
-
-% 去除了平面的点云数据
-subplot(1, 3, 3);
-pcshow(remainingPoints, 'b', 'MarkerSize', 40);
-title('去平面的点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('检测到的平面点', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 %% 分离出平面，然后使用PCA方法降维 + 最小外接矩形求取长和宽
 lengthAll = 0; widthAll = 0; heightAll = 0;
@@ -119,7 +113,7 @@ function [length, width, height] = findLengthAndWidth(points)
     scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
     hold on;
     plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
-    title('最小外接矩形');
+    title('PCA + 最小外接矩形算法', 'FontSize', 15);
     axis equal
     xlabel('X');
     ylabel('Y');

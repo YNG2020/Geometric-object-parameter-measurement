@@ -90,6 +90,6 @@ zlabel('Z');
 title('点云数据和拟合球体');
 hold off;
 %% 输出结果
-fprintf("The radius calculated bt method1 (easy method) is: %f\n", radius1 * RATIO);
-fprintf("The radius calculated bt method2 (RANSAC) is: %f\n", radius2 * RATIO);
-fprintf("The radius calculated bt method3 (LS) is: %f\n", radius3 * RATIO);
+fprintf("The radius calculated by the maximun height is: %f\n", radius1 * RATIO);
+fprintf("The radius calculated by MSAC is: %f\n", radius2 * RATIO);
+fprintf("The radius calculated by LS is: %f\n", radius3 * RATIO);
