@@ -80,7 +80,7 @@ for i = [7 8]
     
     % 绘制结果
     figure;
-    scatter(projected_points(:,1), projected_points(:,2), 'filled');
+    scatter(projected_points(:,1), projected_points(:,2), 'filled', 'b');
     hold on;
     theta = linspace(0, 2*pi, 100);
     x = center(1) + radius * cos(theta);
