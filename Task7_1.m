@@ -15,8 +15,8 @@ for i = [25 26 27 28]
     
     % 原始点云数据
     pcshow(ptCloud, 'MarkerSize', 40);
-    title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 close all
 
@@ -29,8 +29,8 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 xlim = [0.1 0.15];
 ylim = [0.05 0.1];
@@ -54,10 +54,10 @@ cleanCircle = circle(inlierIdx, :); % 平面上的点
 
 subplot(1, 3, 3);
 hold on
-title('去噪结果');
+title('去噪结果', 'FontSize', 15);
 pcshow(cleanCircle, 'g', 'MarkerSize', 40);
 pcshow(other, 'r', 'MarkerSize', 40);
-
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 %% 使用PCA方法降维 + 使用最小覆盖圆求取直径
 [PCACircle] = myPCA(cleanCircle);
 
@@ -66,19 +66,19 @@ diameter = 2 * radius;
 
 % 绘制结果
 figure;
-scatter(PCACircle(:,1), PCACircle(:,2), 'filled');
+scatter(PCACircle(:,1), PCACircle(:,2), 'filled', 'b');
 hold on;
 theta = linspace(0, 2*pi, 100);
 x = center(1) + radius * cos(theta);
 y = center(2) + radius * sin(theta);
 plot(x, y, 'r-', 'LineWidth', 2);
 plot(center(1), center(2), 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
-title('最小覆盖圆');
+title('PCA + 最小圆覆盖算法', 'FontSize', 15);
 axis equal;
 hold off;
 
 %% 输出结果
-fprintf('The diameter is: %f\n', RATIO * diameter);
+fprintf('The diameter is: %f mm\n', RATIO * diameter);
 
 %% 辅助函数：用于构造分割平面方程数据分离
 function [inlier, outliner] = divideData(data, p1, p2, p3, xlim, ylim, zlim)
@@ -105,8 +105,8 @@ function [inlier, outliner] = divideData(data, p1, p2, p3, xlim, ylim, zlim)
     hold on
     plotPlane(a, b, c, d, xlim, ylim, zlim, 'y')
     pcshow(inlier, 'g', 'MarkerSize', 40);
-    title('分离点云数据');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('分离点云数据', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [a, b, c, d] = constructPlaneEquation(P1, P2, P3)
@@ -159,7 +159,7 @@ function plotPlane(a, b, c, d, xlim, ylim, zlim, color)
     end
     % 绘制平面
     surf(X, Y, Z, 'FaceAlpha', 0.3, 'EdgeColor', 'none', 'FaceColor', color);
-
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [maxDiff] = findMaxDiff(x)

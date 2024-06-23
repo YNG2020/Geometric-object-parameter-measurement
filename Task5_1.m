@@ -79,7 +79,7 @@ subplot(1, 3, 3);
 hold on
 pcshow(planePoints, 'g', 'MarkerSize', 40);
 pcshow(remainingPoints, 'r', 'MarkerSize', 40);
-title('进一步去噪', 'FontSize', 15);
+title('去噪结果', 'FontSize', 15);
 xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 % 使用PCA方法降维 + 最小外接矩形求取长和宽

@@ -62,7 +62,7 @@ end
 
 % 绘制点
 fig = figure;
-scatter(points(:, 1), points(:, 2), 'filled');
+scatter(points(:, 1), points(:, 2), 'filled', 'b');
 hold on;
 
 % 绘制凸包

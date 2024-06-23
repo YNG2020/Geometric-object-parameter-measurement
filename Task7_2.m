@@ -15,8 +15,8 @@ for i = [25 26 27 28]
     
     % 原始点云数据
     pcshow(ptCloud, 'MarkerSize', 40);
-    title('原始点云');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('原始点云', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 close all
 
@@ -29,8 +29,8 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 % 原始点云数据
 subplot(1, 3, 1);
 pcshow(ptCloud, 'MarkerSize', 40);
-title('原始点云');
-xlabel('X'); ylabel('Y'); zlabel('Z');
+title('原始点云', 'FontSize', 15);
+xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
 xlim = [0.05 0.15];
 ylim = [0.07 0.11];
@@ -53,7 +53,7 @@ cleanPlane = plane(inlierIdx, :); % 平面上的点
 
 subplot(1, 3, 3);
 hold on
-title('去噪结果');
+title('去噪结果', 'FontSize', 15);
 pcshow(cleanPlane, 'g', 'MarkerSize', 40);
 pcshow(other, 'r', 'MarkerSize', 40);
 
@@ -67,7 +67,7 @@ if height < width
 end
 
 %% 输出结果
-fprintf('The height is: %f\n', RATIO * height);
+fprintf('The height is: %f mm\n', RATIO * height);
 
 %% 辅助函数：用于构造分割平面方程数据分离
 function [inlier, outliner] = divideData(data, p1, p2, p3, xlim, ylim, zlim)
@@ -94,8 +94,8 @@ function [inlier, outliner] = divideData(data, p1, p2, p3, xlim, ylim, zlim)
     hold on
     plotPlane(a, b, c, d, xlim, ylim, zlim, 'y')
     pcshow(inlier, 'g', 'MarkerSize', 40);
-    title('分离点云数据');
-    xlabel('X'); ylabel('Y'); zlabel('Z');
+    title('分离点云数据', 'FontSize', 15);
+    xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 end
 
 function [a, b, c, d] = constructPlaneEquation(P1, P2, P3)
@@ -196,7 +196,7 @@ function [length, width] = findLengthAndWidth(points)
     scatter(projected_points(:,1), projected_points(:,2), 'b', 'filled');
     hold on;
     plot([minAreaRect(:,1); minAreaRect(1,1)], [minAreaRect(:,2); minAreaRect(1,2)], 'r-', 'LineWidth', 2);
-    title('最小外接矩形');
+    title('PCA + 最小外接矩形算法', 'FontSize', 15);
     axis equal
     xlabel('X');
     ylabel('Y');
