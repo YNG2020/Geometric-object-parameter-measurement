@@ -14,7 +14,8 @@
 
 一共有7个点云测量任务，包含9个不同的物体。每个任务都有来自不同视角拍摄的4个点云数据集。原始数据集格式为.npz，为在MATLAB上操作，已将它们全都转换为.mat文件。
 
-![object1](figure/f02.png "object1"){height=174} ![object2](figure/f03.png "object2"){height=174} ![object3](figure/f04.png "object3"){height=174} ![object4](figure/f05.png "object4"){height=174} ![object5](figure/f06.png "object5"){height=174} ![object6](figure/f07.png "object6"){height=174} ![object7](figure/f08.png "object7"){height=174} ![object8](figure/f09.png "object8"){height=174} ![object9](figure/f10.png "object9"){height=174}
+![alt text](figure/f02_10.png)
+
 
 在该工作中值得注意的是：
 
@@ -24,7 +25,7 @@
 
 如下图：
 
-![case1](figure/f11.png "case1"){height=174} ![case2](figure/f12.png "case2"){height=174} ![case3](figure/f13.png "case3"){height=174}
+![alt text](figure/f11_13.png)
 
 ## 2 算法介绍
 
@@ -44,7 +45,7 @@ RANSAC的基本假设是：
 
 这里用一个简单的例子来说明，在一组数据点中找到一条最适合的线。假设，此有一组集合包含了内点群以及外点群，其中内点群包含可以被拟合到线段上的点，而外点群则是无法被拟合的点。如果我们用简单的最小二乘法来找此线，我们将无法得到一条适合于内点群的直线，因为最小二乘法会受外点群影响而影响其结果。而用RANSAC，可以只由内点群来计算出模型，而且概率还够高。然而，RANSAC无法保证结果一定最好，所以必须小心选择参数，使其能有足够的概率得到正确的拟合直线。
 
-![RANSAC例子](figure/f14.png "RANSAC例子"){height=500}
+![RANSAC例子](figure/f14.png "RANSAC例子")
 
 #### 2.1.2 算法概述
 
@@ -99,7 +100,7 @@ model = pcfitsphere(ptCloudIn,maxDistance)
 
 主成分分析（Principal Component Analysis, PCA）是一种广泛使用的降维技术，主要用于简化数据集的维数，同时保留数据中最重要的变化信息。从几何角度上看，PCA是找到一组正交的基向量，使得将数据旋转到新的基向量构成的空间后（这也意味着在不丢失维度信息的前提下，PCA变换是一种保距变换），能集中分布在少数几个基向量（对应着数据方差最大的方向）附近，此时就可以对数据进行降维处理。如下图：
 
-![PCA降维例子](figure/f15.png "PCA降维例子"){height=500}
+![PCA降维例子](figure/f15.png "PCA降维例子"){height=300}
 
 #### 2.2.2 PCA用于3D点云降维
 
@@ -137,7 +138,7 @@ end
 
 在对点云的圆平面进行检测时，往往会遇到圆平面的边界难以检测的问题，如下图：
 
-![alt text](figure/f16.png){height=500}
+![alt text](figure/f16.png){height=300}
 
 我们显然对这个点云数据集代表的是一个圆平面这个猜测十分有把握，但是由于部分点云没有被检测到或被处理掉，导致圆的边界有所缺失，此时，我们很难通过精确的数学方程来解决这个问题。
 
@@ -170,11 +171,11 @@ function sed(P,R)
 
 在对点云的矩形平面进行检测时，往往会遇到矩形平面的边界确定的问题，如下图的左侧所示：
 
-![alt text](figure/f17.png){height=500}
+![alt text](figure/f17.png){height=300}
 
 对于这个问题，一种直观的想法是，先使用PCA，将点云数据旋转到变化最大的两个方向上，然后找出上述点云的在横坐标轴上的最大差值和在纵坐标轴上的最大差值，将其视为矩形的长度和宽度，并以此将矩形平面区分出来。这在矩形的长度显著大于其宽度时较为有效。但是，如果矩形的长度和宽度相差不大，那么PCA就会倾向于将原始点云数据旋转到矩形的对角线上。如下图：
 
-![alt text](figure/f18.png){height=500}
+![alt text](figure/f18.png){height=300}
 
 显然，这时候再沿用上述思路，就会出现较大的误差。
 
@@ -193,7 +194,7 @@ function sed(P,R)
 
 算法的效果如下图所示：
 
-![alt text](figure/f19.png){height=500}
+![alt text](figure/f19.png){height=300}
 
 ## 3 尺寸测量具体步骤与结果
 
@@ -218,7 +219,7 @@ function sed(P,R)
 结果如下：
 
 ![alt text](figure/f21.png)
-![alt text](figure/f22.png){height=500}
+![alt text](figure/f22.png){height=300}
 
 ```MATLAB
 The length is: 60.387119
@@ -242,7 +243,7 @@ The RATIO is: 1.0092505e+03
 结果如下：
 
 ![alt text](figure/f23.png)
-![alt text](figure/f24.png){height=500}
+![alt text](figure/f24.png){height=300}
 
 ```MATLAB
 The diameter is: 40.990364 mm
@@ -310,7 +311,7 @@ The radius calculated by LS is: 20.226751 mm
 结果如下：
 
 ![alt text](figure/f28.png)
-![alt text](figure/f29.png){height=500}
+![alt text](figure/f29.png){height=300}
 
 ```MATLAB
 The length of cuboid is: 42.524376 mm
@@ -382,7 +383,7 @@ The length of D is: 57.732460 mm
 结果如下：
 
 ![alt text](figure/f32.png)
-![alt text](figure/f33.png){height=500}
+![alt text](figure/f33.png){height=300}
 
 ```MATLAB
 The length is: 29.124096 mm
@@ -407,7 +408,7 @@ The width is: 21.622047 mm
 结果如下：
 
 ![alt text](figure/f34.png)
-![alt text](figure/f35.png){height=500}
+![alt text](figure/f35.png){height=300}
 
 ```MATLAB
 The diameter is: 30.542925 mm
@@ -427,7 +428,7 @@ The diameter is: 30.542925 mm
 结果如下：
 
 ![alt text](figure/f36.png)
-![alt text](figure/f37.png){height=500}
+![alt text](figure/f37.png){height=300}
 
 ```MATLAB
 The height is: 61.434860 mm
@@ -448,8 +449,8 @@ The height is: 61.434860 mm
 
      这些畸变实际上对测量结果产生很大的影响，而目前的工作并没有对这些畸变产生的原因进行分析，继而也不能提出一些针对性的算法来清除它们。
   2. 当物体摆放的位置、物体间的组合不相同，不能集成数据，这也降低了数据的利用率。
-  3. 在预处理处理底面回波时，所选取的距离容限太大，使得目标物体靠近底面的点云数据也被一并清除掉，也对测量的准确性造成了比较大的影响。
+  3. 在预处理步骤清除地面回波时，所选取的距离容限太大，使得目标物体的靠近地面的点云数据也被一并清除掉，有可能对测量的准确性造成比较大的影响。
 
 - **收获**
 
-    我在这个项目中的收获是学习到了很多有意思的算法，也将课程上的知识应用于实践中。另外，我也对特征值、特征向量、PCA在数据处理上的作用有了更深的认识。
+    我在这个项目中的收获是学习到了很多有意思的算法，也将课程上的知识应用于实践中。另外，我也对最小二乘法、特征值、特征向量、PCA在数据处理上的作用有了更深的认识。
