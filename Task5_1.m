@@ -27,7 +27,7 @@ figureX = figure('units','normalized','outerposition', [0 0 1 1], 'Name', "data"
 
 % 原始点云数据
 subplot(1, 3, 1);
-pcshow(ptCloud, 'MarkerSize', 40);
+pcshow(data, 'MarkerSize', 40);
 title('原始点云', 'FontSize', 15);
 xlabel('X', 'FontSize', 13); ylabel('Y', 'FontSize', 13); zlabel('Z', 'FontSize', 13);
 
